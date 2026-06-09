@@ -7,10 +7,12 @@ export default defineNuxtConfig({
 
   //Настройка модуля локализации
   i18n: {
-    // Стратегия 'prefix_except_default' означает, что основной язык (RU) будет без префикса в URL, 
-    // а для EN и ZH добавятся пути /en и /zh
+    // Стратегия 'prefix_except_default' означает, что основной язык (US) будет без префикса в URL, 
+    // а для RU и ZH добавятся пути /en и /zh
     strategy: 'prefix_except_default',
 
+    //Дефолтный язык
+    defaultLocale: 'en',
     //Список поддерживаемых языков лендинга
     locales: [
       {code: 'ru', iso: 'ru-RU', name: 'Русский'},
@@ -25,6 +27,4 @@ export default defineNuxtConfig({
       redirectOn: 'root'
     }
   },
-
-  compatibilityDate: '2026-06-09'
 })
