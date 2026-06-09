@@ -1,0 +1,16 @@
+# Логи и временные файлы
+└── node_modules/
+├── .nuxt/
+├── .strapi/
+├── dist/
+├── build/
+└── .output/
+
+# Файлы конфигурации и секреты (пароли, ключи API)
+.env
+.env.local
+.env.production
+
+# Системные файлы Apple и Windows
+.DS_Store
+Thumbs.db
