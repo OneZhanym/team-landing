@@ -1,30 +1,31 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { fileURLToPath } from 'node:url'
+
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
-  //Подключение Tailwind CSS для стилей и i18n для языков
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/i18n'],
+  // Включаем необходимые модули для проекта
+  modules: [
+    '@nuxtjs/tailwindcss', // Модуль для стилизации интерфейса
+    '@nuxtjs/i18n'         // Модуль для мультиязычности на фронтенде
+  ],
 
-  //Настройка модуля локализации
+  // Конфигурация модуля мультиязычности i18n
   i18n: {
-    // Стратегия 'prefix_except_default' означает, что основной язык (US) будет без префикса в URL, 
-    // а для RU и ZH добавятся пути /en и /zh
-    strategy: 'prefix_except_default',
-
-    //Дефолтный язык
-    defaultLocale: 'en',
-    //Список поддерживаемых языков лендинга
+    lazy: false,
+    langDir: 'locales/', // Папка, где хранятся файлы переводов интерфейса
     locales: [
-      {code: 'ru', iso: 'ru-RU', name: 'Русский'},
-      {code: 'en', iso: 'en-US', name: 'English'},
-      {code: 'zh', iso: 'zh-CN', name: '𡗗文 (Chinese)'}
+      { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
+      { code: 'ru', iso: 'ru-RU', file: 'ru.json', name: 'Русский' },
+      { code: 'zh-cn', iso: 'zh-CN', file: 'zh.json', name: 'Chinese' }
     ],
-
-    //Включение определение языка браузера пользователя
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_redirected',
-      redirectOn: 'root'
-    }
+    defaultLocale: 'ru', // Язык по умолчанию при открытии сайта
+    strategy: 'no_prefix' // Отключает добавление /ru/ или /en/ в URL-адрес
   },
+
+  // Настройка путей для совместимости с алиасами (например, @/)
+  alias: {
+    '@': fileURLToPath(new URL('./', import.meta.url))
+  },
+
+  // Включаем инструменты разработчика в браузере (опционально)
+  devtools: { enabled: true }
 })
