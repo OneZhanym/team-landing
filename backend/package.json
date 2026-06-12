@@ -12,7 +12,9 @@
     "start": "strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
-    "upgrade:dry": "npx @strapi/upgrade latest --dry"
+    "upgrade:dry": "npx @strapi/upgrade latest --dry",
+    "db:export": "strapi export --no-encrypt --file clinic-data",
+    "db:import": "strapi import --file clinic-data.tar.gz --force"
   },
   "dependencies": {
     "@strapi/plugin-cloud": "5.47.1",
