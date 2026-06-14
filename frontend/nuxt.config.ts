@@ -1,31 +1,28 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 import { fileURLToPath } from 'node:url'
 
 export default defineNuxtConfig({
-  // Включаем необходимые модули для проекта
   modules: [
-    '@nuxtjs/tailwindcss', // Модуль для стилизации интерфейса
-    '@nuxtjs/i18n'         // Модуль для мультиязычности на фронтенде
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/i18n'
   ],
 
-  // Конфигурация модуля мультиязычности i18n
   i18n: {
     lazy: false,
-    langDir: 'locales/', // Папка, где хранятся файлы переводов интерфейса
+    langDir: 'locales/',
     locales: [
       { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
       { code: 'ru', iso: 'ru-RU', file: 'ru.json', name: 'Русский' },
       { code: 'zh-cn', iso: 'zh-CN', file: 'zh.json', name: 'Chinese' }
     ],
-    defaultLocale: 'ru', // Язык по умолчанию при открытии сайта
-    strategy: 'no_prefix' // Отключает добавление /ru/ или /en/ в URL-адрес
+    defaultLocale: 'ru',
+    strategy: 'no_prefix'
   },
 
-  // Настройка путей для совместимости с алиасами (например, @/)
   alias: {
     '@': fileURLToPath(new URL('./', import.meta.url))
   },
 
-  // Включаем инструменты разработчика в браузере (опционально)
-  devtools: { enabled: true }
+  devtools: { enabled: true },
+
+  compatibilityDate: '2026-06-12'
 })
