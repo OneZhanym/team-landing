@@ -4,27 +4,26 @@
     <div class="absolute w-[500px] h-[500px] -top-[120px] -right-20 rounded-full bg-red/[0.22] blur-[100px] pointer-events-none"></div>
     <div class="absolute w-[300px] h-[300px] -bottom-20 left-[5%] rounded-full bg-purple/[0.18] blur-[80px] pointer-events-none"></div>
 
-    <div class="max-w-container mx-auto relative z-10 grid lg:grid-cols-2 gap-20 items-center">
+    <div v-if="clinicData" class="max-w-container mx-auto relative z-10 grid lg:grid-cols-2 gap-20 items-center">
 
       <div>
         <div class="reveal inline-flex items-center gap-2 bg-white/[0.08] border border-white/[0.16] rounded-full px-4 py-1.5 text-xs font-semibold text-white/80 mb-5.5">
           <span class="w-1.5 h-1.5 rounded-full bg-[#f87171]"></span>
-          Медицинский центр
+          {{ clinicData.clinic_badge }}
         </div>
 
         <h2 class="reveal font-heading font-extrabold text-[clamp(32px,4vw,52px)] tracking-[-1.5px] leading-[1.08] text-white mb-4.5" style="transition-delay: 100ms;">
-          Развиваем медицину<br>
-          <span class="text-[#fca5a5]">— вместе с IT</span>
+          {{ clinicData.clinic_title }}
         </h2>
 
         <p class="reveal text-[15px] text-white/55 leading-[1.8] mb-8" style="transition-delay: 200ms;">
-          Мы направляем выручку нашей аутстаффинговой IT-компании на развитие этой небольшой клиники. Наша цель — обеспечить закупку современного оборудования и расширение спектра медицинских услуг, чтобы качественная забота о здоровье становилась доступнее.
+          {{ clinicData.clinic_description }}
         </p>
 
         <div class="grid sm:grid-cols-2 gap-3 mb-7">
           <div 
-            v-for="(stat, index) in clinicStats" 
-            :key="stat.label" 
+            v-for="(stat, index) in clinicData.clinic_stats" 
+            :key="stat.id || index" 
             class="reveal bg-white/[0.07] border border-white/10 rounded-[14px] p-5 transition-colors hover:bg-white/[0.11]"
             :style="{ transitionDelay: `${300 + (index * 100)}ms` }"
           >
@@ -34,7 +33,7 @@
         </div>
 
         <a href="#contact" class="reveal inline-block bg-[linear-gradient(135deg,#DC2626,#EF4444)] text-white text-[15px] font-bold px-7 py-3.5 rounded-xl shadow-glow-red hover:opacity-90 transition-opacity" style="transition-delay: 500ms;">
-          Поддержать миссию
+          {{ clinicData.clinic_btn_text }}
         </a>
       </div>
 
@@ -51,12 +50,28 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
-import { clinicStats } from '~/data/content'
+import { computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 
+const { locale } = useI18n()
+const { find } = useStrapi()
+
+// 1. Изолированный запрос к Strapi v5 для блока клиники
+const { data: response, refresh } = await useAsyncData(
+  'homepage-clinic',
+  () => find('homepage', {
+    locale: locale.value,
+    populate: ['clinic_stats'] // Явно упаковываем повторяемый компонент со статистикой
+  })
+)
+const clinicData = computed(() => response.value?.data)
+
+// 2. Логика IntersectionObserver анимации от твоего коллеги
 let observer = null
 
-onMounted(() => {
+const initObserver = () => {
+  // Размонтируем старый обсервер, если он был инициализирован ранее
+  if (observer) observer.disconnect()
+
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -68,13 +83,24 @@ onMounted(() => {
     rootMargin: '0px 0px -50px 0px'
   })
 
+  // Ищем элементы с классом .reveal и вешаем на них слежку
   const hiddenElements = document.querySelectorAll('.reveal')
   hiddenElements.forEach((el) => observer.observe(el))
+}
+
+onMounted(() => {
+  initObserver()
 })
 
 onUnmounted(() => {
-  if (observer) {
-    observer.disconnect()
-  }
+  if (observer) observer.disconnect()
+})
+
+// Принудительно перезапускаем анимацию и перезапрашиваем данные, если пользователь сменил язык
+watch(locale, async () => {
+  await refresh()
+  // Ждем, пока Vue обновит DOM-дерево под новые текстовые переменные
+  await nextTick()
+  initObserver()
 })
 </script>

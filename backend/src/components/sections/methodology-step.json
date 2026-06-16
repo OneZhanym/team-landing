@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_sections_methodology_steps",
+  "info": {
+    "displayName": "methodology-step"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    }
+  },
+  "config": {}
+}

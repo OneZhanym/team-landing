@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_sections_tech_stack_items",
+  "info": {
+    "displayName": "tech-stack-item"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "sub": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string"
+    },
+    "theme": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

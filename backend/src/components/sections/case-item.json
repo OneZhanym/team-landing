@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_sections_case_items",
+  "info": {
+    "displayName": "case-item"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "theme": {
+      "type": "enumeration",
+      "enum": [
+        "purple",
+        "mint",
+        "sky"
+      ]
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  },
+  "config": {}
+}

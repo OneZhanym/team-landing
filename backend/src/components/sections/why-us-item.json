@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_sections_why_us_items",
+  "info": {
+    "displayName": "why-us-item"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "icon_key": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_sections_about_steps",
+  "info": {
+    "displayName": "about-step"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    }
+  },
+  "config": {}
+}

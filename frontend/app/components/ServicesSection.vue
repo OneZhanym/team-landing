@@ -1,31 +1,40 @@
 <template>
   <section id="services" class="py-24 px-6 lg:px-[60px]">
-    <div class="max-w-container mx-auto">
+    <div v-if="pageData && serviceList.length" class="max-w-container mx-auto">
 
       <div class="text-center max-w-[620px] mx-auto mb-14">
         <div class="flex items-center justify-center gap-2.5 mb-3.5">
           <div class="w-2 h-2 rounded-full bg-blue"></div>
-          <div class="text-xs font-bold text-blue tracking-[2px] uppercase">Услуги</div>
+          <div class="text-xs font-bold text-blue tracking-[2px] uppercase">
+            {{ pageData.services_badge }}
+          </div>
         </div>
         <h2 class="font-heading font-extrabold text-[clamp(28px,3.5vw,44px)] tracking-[-1.5px] leading-[1.1] text-ink mb-3.5">
-          Что мы предлагаем
+          {{ pageData.services_title }}
         </h2>
         <p class="text-base text-ink-3 leading-[1.75]">
-          [Краткое описание спектра услуг компании.]
+          {{ pageData.services_description }}
         </p>
       </div>
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         <div
-          v-for="svc in services"
+          v-for="svc in serviceList"
           :key="svc.id"
           :ref="setRef"
           class="reveal relative bg-white border border-border rounded-xl2 p-7 overflow-hidden transition-all hover:-translate-y-1 hover:shadow-card-hover hover:border-transparent"
         >
-          <div class="absolute top-0 left-0 right-0 h-[3px]" :class="accentBar[svc.accent]"></div>
-          <div class="w-[50px] h-[50px] rounded-[14px] flex items-center justify-center mb-4.5" :class="iconBg[svc.accent]">
-            <component :is="icons[svc.icon]" class="w-6 h-6 fill-none" :class="iconColor[svc.accent]" stroke-width="1.5" />
+          <div class="absolute top-0 left-0 right-0 h-[3px]" :class="accentBar[svc.accent_color] || accentBar.blue"></div>
+          
+          <div class="w-[50px] h-[50px] rounded-[14px] flex items-center justify-center mb-4.5" :class="iconBg[svc.accent_color] || iconBg.blue">
+            <component 
+              :is="icons[svc.icon_key] || icons.staff" 
+              class="w-6 h-6 fill-none" 
+              :class="iconColor[svc.accent_color] || iconColor.blue" 
+              stroke-width="1.5" 
+            />
           </div>
+          
           <h3 class="font-heading font-bold text-base text-ink mb-2">{{ svc.title }}</h3>
           <p class="text-[13px] text-ink-3 leading-[1.65]">{{ svc.description }}</p>
         </div>
@@ -36,12 +45,38 @@
 </template>
 
 <script setup>
-import { h } from 'vue'
-import { services } from '~/data/services'
-import { useRevealGroup } from '~/composables/useReveal'
+import { h, computed, watch } from 'vue'
 
+const { locale } = useI18n()
+const { find } = useStrapi()
+
+// Подключаем анимационный хук для reveal-эффекта
 const setRef = useRevealGroup(60)
 
+// 1. Параллельный асинхронный запрос к двум разным эндпоинтам Strapi v5
+const { data: response, refresh } = await useAsyncData(
+  'homepage-services-data',
+  async () => {
+    const [pageRes, servicesRes] = await Promise.all([
+      find('homepage', { locale: locale.value }),
+      find('services', { locale: locale.value, sort: 'id:asc' }) // Сортируем услуги по порядку создания
+    ])
+    return {
+      page: pageRes.data,
+      services: servicesRes.data
+    }
+  }
+)
+
+const pageData = computed(() => response.value?.page)
+const serviceList = computed(() => response.value?.services || [])
+
+// Перезапускаем сбор контента при смене локали на фронтенде
+watch(locale, () => {
+  refresh()
+})
+
+// 2. Локальная дизайн-система стилей (перемапливание строк из Strapi в классы Tailwind)
 const accentBar = {
   blue:   'bg-gradient-to-r from-blue to-blue-light',
   red:    'bg-gradient-to-r from-red to-red-light',
@@ -60,6 +95,7 @@ const iconColor = {
   blue: 'stroke-blue', red: 'stroke-red', purple: 'stroke-purple', green: 'stroke-green', orange: 'stroke-orange',
 }
 
+// 3. Inline SVG-иконки, отрисовываемые через функциональные компоненты h()
 const icons = {
   staff: () => h('svg', { viewBox: '0 0 24 24' }, [h('rect', { x: 2, y: 3, width: 20, height: 14, rx: 2 }), h('line', { x1: 8, y1: 21, x2: 16, y2: 21 }), h('line', { x1: 12, y1: 17, x2: 12, y2: 21 })]),
   rocket: () => h('svg', { viewBox: '0 0 24 24' }, [h('path', { d: 'M12 2L2 7l10 5 10-5-10-5z' }), h('path', { d: 'M2 17l10 5 10-5M2 12l10 5 10-5' })]),

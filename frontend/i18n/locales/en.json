@@ -1,3 +1,11 @@
 {
-    
+  "nav": {
+    "about": "About Us",
+    "services": "Services",
+    "tech": "Technologies",
+    "cases": "Cases",
+    "team": "Our Team",
+    "clinic": "Clinic",
+    "contact": "Contact Us"
+  }
 }
